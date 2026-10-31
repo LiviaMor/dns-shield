@@ -318,6 +318,10 @@ Comparação para posicionamento — útil no pitch e para responder objeções:
 
 ## 13. Contribuindo
 
+> 📣 **Material de pitch:** veja [`docs/pitch.md`](docs/pitch.md) — roteiro de
+> apresentação de 3 minutos (dor, problema, solução, custo, concorrência,
+> escalabilidade).
+
 Projeto open source sob licença MIT — contribuições são bem-vindas (Hacktoberfest-friendly 🎃).
 
 1. Faça um fork e crie uma branch (`git checkout -b feature/minha-ideia`).
