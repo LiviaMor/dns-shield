@@ -34,7 +34,7 @@ body {
 }
 
 .brand { display: flex; align-items: center; gap: 14px; }
-.logo { font-size: 34px; }
+.logo { width: 44px; height: 44px; display: block; }
 .brand h1 { margin: 0; font-size: 22px; letter-spacing: 0.3px; }
 .tagline { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
 

@@ -1,0 +1,20 @@
+<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DNS Shield">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f8cff"/>
+      <stop offset="1" stop-color="#38d39f"/>
+    </linearGradient>
+  </defs>
+  <!-- Escudo -->
+  <path d="M22 2.5l15 5.2v10.6c0 9.7-6.3 18.4-15 21.2C13.3 36.7 7 28 7 18.3V7.7L22 2.5z"
+        fill="url(#shieldGrad)"/>
+  <path d="M22 2.5l15 5.2v10.6c0 9.7-6.3 18.4-15 21.2C13.3 36.7 7 28 7 18.3V7.7L22 2.5z"
+        fill="none" stroke="#0b1020" stroke-opacity="0.25" stroke-width="1"/>
+  <!-- Nós de rede (DNS) dentro do escudo -->
+  <circle cx="22" cy="14" r="2.6" fill="#0b1020"/>
+  <circle cx="15" cy="24.5" r="2.2" fill="#0b1020"/>
+  <circle cx="29" cy="24.5" r="2.2" fill="#0b1020"/>
+  <line x1="22" y1="14" x2="15" y2="24.5" stroke="#0b1020" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="22" y1="14" x2="29" y2="24.5" stroke="#0b1020" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="15" y1="24.5" x2="29" y2="24.5" stroke="#0b1020" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

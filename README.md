@@ -197,6 +197,13 @@ Um painel web leve (HTML/CSS/JS puro, sem build) pensado para o cliente final
 - **Relatório de ameaças** (consultas, bloqueadas, taxa de bloqueio);
 - Atualização automática a cada 15s.
 
+> **Marca própria, não a do Pi-hole.** O cliente vê apenas o painel DNS Shield
+> (logo e identidade em `frontend/logo.svg`). O admin nativo do Pi-hole (porta
+> 8090/8080) é uma **ferramenta interna de operação/suporte** e **não deve ser
+> exposto ao cliente** — isso evita confusão de marca e respeita a licença/marca
+> do Pi-hole. Toda a experiência de marca do produto vive no `frontend/`, onde
+> temos controle total.
+
 Rodando localmente (fora do Docker):
 ```bash
 cd frontend
