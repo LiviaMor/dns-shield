@@ -64,6 +64,38 @@ services:
     # Roda uma vez, envia a topologia e encerra.
     restart: "no"
 
+  # Reporter: lê as estatísticas REAIS do Pi-hole e envia ao backend, para o
+  # bloqueio aparecer no painel. Gera algumas consultas de demonstração antes,
+  # para que haja números para exibir (inclui domínios de anúncio = bloqueados).
+  edge-reporter:
+    build:
+      context: ./edge-node
+      dockerfile: Dockerfile.discovery
+    container_name: dns-shield-reporter
+    environment:
+      TENANT_ID: "clinica-demo"
+      CLOUD_API_URL: "http://cloud-backend:3000/api"
+      PIHOLE_URL: "http://pihole:80"
+      PIHOLE_PASSWORD: "demo1234"
+      REPORT_INTERVAL: "30"
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo "[reporter] aguardando Pi-hole..."
+        sleep 25
+        # Gera tráfego de demo: sites normais + domínios de anúncio (bloqueados).
+        for d in github.com google.com wikipedia.org doubleclick.net ads.google.com googlesyndication.com doubleclick.net ads.google.com; do
+          nslookup "$$d" pihole >/dev/null 2>&1 || true
+        done
+        python3 pihole_reporter.py
+    depends_on:
+      cloud-backend:
+        condition: service_started
+      pihole:
+        condition: service_started
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend

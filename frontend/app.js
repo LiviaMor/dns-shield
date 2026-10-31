@@ -103,10 +103,26 @@ async function loadReport(tenant) {
         <div class="metric"><div class="label">Consultas</div><div class="value">${r.totalQueries ?? '—'}</div></div>
         <div class="metric"><div class="label">Bloqueadas</div><div class="value danger">${r.blockedQueries ?? '—'}</div></div>
         <div class="metric"><div class="label">Taxa de bloqueio</div><div class="value">${r.blockRatePct ?? '—'}%</div></div>
-      </div>`;
+      </div>
+      ${renderTopBlocked(r.topBlockedDomains)}`;
   } catch (e) {
     area.innerHTML = `<span class="muted">Relatório indisponível (${e.message}).</span>`;
   }
+}
+
+function renderTopBlocked(list) {
+  if (!Array.isArray(list) || list.length === 0) return '';
+  const rows = list
+    .map(
+      (d) => `<tr><td>🛑 ${d.domain}</td><td class="danger">${d.hits}×</td></tr>`,
+    )
+    .join('');
+  return `
+    <h3 class="subhead">Principais ameaças bloqueadas</h3>
+    <table class="blocked-table">
+      <thead><tr><th>Domínio</th><th>Bloqueios</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 async function loadGatewayPlan(tenant) {

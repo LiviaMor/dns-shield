@@ -1,6 +1,7 @@
-# DNS Shield — Agente de descoberta de rede (Edge)
-# Imagem mínima; o script usa só a stdlib do Python.
+# DNS Shield — Agente de descoberta de rede + reporter (Edge)
+# Imagem mínima; os scripts usam só a stdlib do Python.
 FROM python:3.12-slim
 WORKDIR /app
 COPY scripts/network_discovery.py ./network_discovery.py
+COPY scripts/pihole_reporter.py ./pihole_reporter.py
 ENTRYPOINT ["python3", "network_discovery.py"]
