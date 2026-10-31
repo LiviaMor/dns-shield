@@ -1,0 +1,30 @@
+# DNS Shield — TESTE LOCAL (ponte para rodar em qualquer PC: Mac, Linux, Windows)
+#
+# Esta pasta é ISOLADA do projeto principal. Sobe só o Pi-hole, expondo o DNS
+# na porta 53 do SEU computador. Assim você pode apontar o DNS do seu PC (ou do
+# roteador) para esta máquina e ver o bloqueio de anúncios funcionando de verdade
+# — sem precisar de Raspberry Pi e sem alterar o resto do projeto.
+#
+# Depois de subir:  ./connect.sh        (mostra como apontar o DNS)
+# Para testar:       ./test-block.sh    (prova o bloqueio)
+
+services:
+  pihole:
+    image: pihole/pihole:latest
+    container_name: dns-shield-local
+    ports:
+      - "53:53/tcp"       # DNS -> porta padrão do SEU PC
+      - "53:53/udp"
+      - "8090:80/tcp"     # painel admin -> http://localhost:8090/admin
+    environment:
+      TZ: "America/Sao_Paulo"
+      FTLCONF_webserver_api_password: "demo1234"
+      # Escuta em todas as interfaces para aceitar consultas de outros
+      # dispositivos da sua rede (necessário para proteger a rede inteira).
+      FTLCONF_dns_listeningMode: "all"
+    volumes:
+      - pihole-local:/etc/pihole
+    restart: unless-stopped
+
+volumes:
+  pihole-local:
