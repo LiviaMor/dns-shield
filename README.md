@@ -353,7 +353,8 @@ Comparação para posicionamento — útil no pitch e para responder objeções:
 > 📣 **Material de pitch:** veja [`docs/pitch.md`](docs/pitch.md) — roteiro de
 > apresentação de 3 minutos (dor, problema, solução, custo, concorrência,
 > escalabilidade) — e [`docs/pitch-slides.md`](docs/pitch-slides.md) para a
-> versão em slides.
+> versão em slides. Para o ângulo **consumidor / Shark Tank** (7 slides, "Home
+> AI"), veja [`docs/pitch-home-ai.md`](docs/pitch-home-ai.md).
 
 Projeto open source sob licença MIT — contribuições são bem-vindas (Hacktoberfest-friendly 🎃).
 

@@ -5,134 +5,153 @@ paginate: true
 ---
 
 <!--
-Pitch do DNS Shield Home AI — ângulo consumidor: privacidade residencial +
-controle parental + IA que explica a rede em linguagem humana.
-Narrativa: começa pelo COMPORTAMENTO do consumidor (não pela tecnologia),
-valida com números e apresenta a solução. 7 slides — enxuto e direto.
-Pronto para Canva/PowerPoint ou Marp: `marp pitch-home-ai.md --pdf`.
-Regra de ouro: NÃO leia o slide. A fala está nas notas do apresentador.
+Pitch Shark Tank — 3 minutos, 7 slides.
+DNS Shield Home AI — O Guardião Inteligente da Casa Conectada.
+Bullets no telão; a fala (narrativa) vai nas notas do apresentador.
+Render: marp docs/pitch-home-ai.md --pdf
 -->
 
 # 🛡️ DNS Shield Home AI
+## O Guardião Inteligente da Casa Conectada
 
-### O primeiro appliance de IA para privacidade e controle da casa
-
-Entende a sua rede, protege a família e **explica tudo em linguagem humana** — sem os dados saírem de casa.
+**Conecte. Proteja. Controle.**
 
 <!--
-Abertura (15s): "A casa das pessoas ficou inteligente. A privacidade e a
-segurança delas, não. Trouxemos uma IA que cuida disso — e fala em português,
-não em logs."
+ABERTURA / A HISTÓRIA (30s) — contar, não ler:
+"São 22h. Seus filhos dormem. A câmera do quarto, a Alexa, a Smart TV, o
+videogame, o aspirador robô — tudo ligado. Tudo parece seguro. Mas quem está
+protegendo a sua casa DIGITAL? Todo mundo tem fechadura, alarme e câmera para o
+lado de fora. Quase ninguém sabe o que acontece DENTRO da própria rede."
 -->
 
 ---
 
-## O problema
+# 1 · O problema
 
-### Sua casa está cada vez mais inteligente. Sua privacidade e seus filhos, expostos.
+A casa ficou inteligente — e **vulnerável**.
 
-- **45%** das casas inteligentes no Brasil têm ao menos **um dispositivo vulnerável**
-- **66%** dos roteadores domésticos têm **vulnerabilidades ou configurações inseguras**
-- E os **filhos navegam sem nenhum filtro** — ninguém sabe o que entra na rede
+- **45%** das residências inteligentes no Brasil têm ≥1 dispositivo vulnerável
+- **66%** dos roteadores domésticos estão em risco
+- Os alvos: **câmeras, TVs, assistentes, impressoras, IoT** — ligados 24h/dia
 
-> O consumidor compra Smart TV, Alexa, câmeras… mas **não sabe quem está conectado, o que fazem com seus dados, nem o que as crianças acessam.**
+> O perigo não está só no computador. Está em tudo que fica "sempre ligado".
 
 <!--
-(35s) Dois medos num slide só: privacidade (os números) e os filhos (controle
-parental). Diga: "quase metade das casas tem um ponto vulnerável, dois terços dos
-roteadores já nascem inseguros — e ninguém tem controle sobre o que a criança vê."
-Não falta tecnologia; falta visibilidade e controle.
+(25s) Fonte: Avast (pesquisa Brasil, 2 mi+ de redes). Tenha a fonte na ponta da
+língua — o Shark vai perguntar. Enfatize: são aparelhos que ninguém atualiza nem
+vigia, ligados o dia inteiro.
 -->
 
 ---
 
-## A preocupação já existe. Falta a ferramenta.
+# 2 · O insight
 
-Pesquisa **Cetic / G1**:
+Na casa **física**, você percebe quando algo está errado.
+Na casa **digital**, você não percebe.
 
-- **77%** já desinstalaram apps por medo do uso dos seus dados
-- **45%** já **desistiram de comprar** eletrônicos por preocupação com privacidade
+As ferramentas atuais mostram: `logs`, `IPs`, `portas`, `DNS`, `alertas`.
+E ninguém entende isso.
 
-> O brasileiro já **muda de comportamento** por privacidade.
-> Mas não tem nenhuma ferramenta simples para protegê-la **dentro de casa.**
+> O problema não é falta de informação.
+> É **falta de interpretação**.
 
 <!--
-(25s) A demanda está provada. As pessoas se importam e já agem. Falta a solução
-residencial. É o buraco que preenchemos.
+(25s) Este é o pivô do pitch. A commodity (bloquear) já existe e é grátis. O que
+falta é TRADUZIR o técnico para humano. É aí que está o nosso produto.
 -->
 
 ---
 
-## A solução
+# 3 · A solução — AI First
 
-### DNS Shield Home AI — tão simples quanto instalar uma Alexa
+## DNS Shield Home AI
+Appliance com **IA local** que observa a rede e **traduz** para linguagem humana.
 
-**Conectar na tomada → Escanear o QR Code → Conectar ao Wi-Fi.** Pronto.
-
-A IA começa a entender a rede e entrega três coisas:
-
-- 🛡️ **Protege** — bloqueia golpes, malware e rastreadores antes de chegarem
-- 👨‍👩‍👧 **Controle parental** — filtra conteúdo e mostra o que as crianças acessam
-- 🧠 **Explica** — tudo em linguagem humana, não em logs
-
-<!--
-(40s) Atrito zero: três passos, nenhum técnico. Depois, os três pilares de valor.
-O controle parental é o gancho emocional mais forte para famílias. Se der, mostre
-a demo: painel bloqueando doubleclick.net / ads.google.com em tempo real.
--->
-
----
-
-## AI First + Controle parental
-
-### Não mostramos logs, IPs nem consultas DNS. Nós explicamos.
-
-| Em vez de… | O usuário vê… |
+| Concorrente mostra | Nós dizemos |
 |---|---|
-| `Unknown Device Connected` | "Um novo dispositivo entrou na rede há 15 min. Deseja identificá-lo?" |
-| `High DNS Traffic` | "Sua Smart TV fez um volume anormal de conexões. Verifique atualizações." |
-| `blocked: category adult` | "O tablet das crianças tentou acessar conteúdo adulto — e foi bloqueado." |
+| `192.168.0.105` | "Um novo dispositivo entrou na sua rede há 15 min." |
+| `Blocked Request` | "Bloqueamos uma conexão com um site suspeito." |
+| `Firmware Outdated` | "Um aparelho está desatualizado e mais vulnerável." |
+
+Instalar: **liga na tomada → conecta no Wi-Fi "DNS-Shield" → pronto.**
+Sem mexer no roteador. Sem técnico.
 
 <!--
-(35s) O coração do produto. Leia o terceiro exemplo em voz alta — é o que vende o
-controle parental. A IA traduz a rede para o pai/mãe entender e agir.
+(40s) MOSTRE A DEMO aqui: painel bloqueando doubleclick.net/ads.google.com em
+tempo real (http://localhost:8088). "Liga, conecta no Wi-Fi, protegido" — é o
+hostapd que cria a rede própria, sem tocar no modem.
 -->
 
 ---
 
-## Diferencial + modelo de negócios
+# 4 · Privacidade de verdade (o diferencial)
 
-| Concorrente | Protege | Controle parental | Explica |
-|---|:---:|:---:|:---:|
-| Pi-hole / AdGuard / NextDNS | ✅ | Parcial | ❌ |
-| Firewalla | ✅ | ✅ | Parcial |
-| **DNS Shield AI** | ✅ | ✅ | ✅ |
+Não lemos mensagens. Não lemos e-mails. Não escutamos conversas.
+Analisamos **apenas o comportamento da rede**.
 
-**Produto:** hardware proprietário · **R$ 399 a R$ 699**
-**Recorrência:** Remote (acesso remoto) · Care (suporte SLA) · Extended Updates
+- **IA local (Llama)** — roda dentro de casa
+- **Dados ficam na residência** — sem cloud obrigatória
+- **Inteligência desce; dados do cliente nunca sobem**
+- Sem venda de dados. Sem monitoramento invasivo.
 
-> **Privacidade por design:** IA (Llama), dados, logs e dashboard **100% locais**. Nada sai de casa.
+> "Não podemos violar a privacidade com um dado que nunca recebemos."
 
 <!--
-(35s) Todos protegem — isso virou commodity. O diferencial é explicar e dar
-controle parental de verdade. Modelo: venda do hardware + MRR nas assinaturas.
-E o reforço de confiança: a IA que protege a privacidade não pode vazá-la.
+(30s) Este é o trunfo e o que nos separa das big techs. A IA é central só para
+CURAR a inteligência (ameaças, controle parental); a análise dos dados do cliente
+é local. Modelo confirmado pela indústria (NextDNS/Cloudflare).
 -->
 
 ---
 
-## Por que alguém compraria isso?
+# 5 · Concorrência & Negócio
 
-Hoje existem **milhões de casas inteligentes** — e **nenhuma inteligência** olhando pela privacidade e pela família de quem vive nelas.
+| | Pi-hole | NextDNS | Firewalla | **Home AI** |
+|---|:---:|:---:|:---:|:---:|
+| Linguagem natural | ❌ | ❌ | ❌ | ✅ |
+| IA local | ❌ | ❌ | ❌ | ✅ |
+| Privacidade por padrão | ⚠️ | ⚠️ | ⚠️ | ✅ |
+| Zero config / famílias | ❌ | ❌ | ⚠️ | ✅ |
 
-> **77% dos brasileiros já removeram apps** por medo dos seus dados. A preocupação existe; a ferramenta não.
->
-> O DNS Shield Home AI transforma **segurança, privacidade e controle parental** em algo **tão simples quanto instalar uma Alexa** — mantendo os dados **dentro da própria casa.**
-
-**Repo:** github.com/LiviaMor/dns-shield · **Demo:** `./demo.sh up` · **Obrigada! Perguntas?**
+**Modelo:** hardware **R$ 699** (venda única) + add-ons recorrentes:
+Remote (acesso remoto) · Care (suporte SLA) · Updates estendidas.
+**Os dados continuam do cliente.**
 
 <!--
-(30s) Fecho + resposta à banca + Q&A num slide só. Deixe no telão durante as
-perguntas. Números na ponta da língua: 45% das casas vulneráveis · 66% dos
-roteadores inseguros · 77% removeram apps · IA 100% local.
+(30s) Não vendemos firewall/bloqueador/dashboard — vendemos TRANQUILIDADE. O
+hardware paga o CAC; a recorrência (serviços) é a margem. Open source por baixo
+reduz custo e gera confiança.
 -->
+
+---
+
+# 6 · Roadmap, visão e o pedido
+
+**MVP em 6 semanas** (1 IA + 1 full stack) · **Beta**: 10 casas em 30 dias.
+**Meta:** *95% instalam sem ajuda humana — se precisar de técnico, falhamos.*
+
+Hoje protegemos a rede. Amanhã respondemos:
+*"Minha casa está segura? O que mudou? Tem algum aparelho que eu não reconheço?"*
+
+> A maioria usa IA para **aprender sobre o usuário**.
+> Nós usamos IA para o **usuário entender a própria tecnologia**.
+
+**DNS Shield Home AI — o guardião que faltava.** 🛡️
+
+<!--
+(30s) Feche com o pedido (investimento/parceria) e a visão. Resposta pronta para
+"qual o diferencial?": "Não vendemos um firewall nem um dashboard. Vendemos
+tranquilidade: transformamos riscos invisíveis em explicações que qualquer um
+entende — sem abrir mão da privacidade."
+PROVA real na demo: ~76 mil domínios bloqueados, ~23% das consultas filtradas,
+IA local com fallback, open source em github.com/LiviaMor/dns-shield.
+-->
+
+---
+
+## Fonte dos dados
+
+Estatísticas de vulnerabilidade: **Avast** — pesquisa com 2 milhões+ de redes
+domésticas no Brasil (45% das casas inteligentes com ≥1 dispositivo vulnerável;
+66% dos roteadores em risco). *Conteúdo reformulado para conformidade de licença.*
+- https://blog.avast.com/pt-br/45-das-resid%C3%AAncias-inteligentes-no-brasil-possuem-dispositivos-vulner%C3%A1veis

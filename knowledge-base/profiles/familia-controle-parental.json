@@ -17,10 +17,26 @@
   "blocklists": [
     "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts"
   ],
+  "safeSearch": {
+    "ativo": true,
+    "descricao": "Força o modo seguro de busca (Google, Bing, DuckDuckGo) e o YouTube restrito via reescrita de DNS (CNAME). A criança não consegue desligar pelo navegador.",
+    "cnames": {
+      "www.google.com": "forcesafesearch.google.com",
+      "google.com": "forcesafesearch.google.com",
+      "www.bing.com": "strict.bing.com",
+      "bing.com": "strict.bing.com",
+      "duckduckgo.com": "safe.duckduckgo.com",
+      "www.youtube.com": "restrict.youtube.com",
+      "youtube.com": "restrict.youtube.com",
+      "m.youtube.com": "restrict.youtube.com",
+      "youtubei.googleapis.com": "restrict.youtube.com",
+      "www.youtube-nocookie.com": "restrict.youtube.com"
+    }
+  },
   "horarioEscolar": {
     "ativo": false,
     "descricao": "Opcional: bloquear redes sociais/jogos em horários definidos.",
     "janelas": []
   },
-  "observacao": "Categorias como adult-content e gambling são aplicadas via blocklists especializadas. Ajustável por família."
+  "observacao": "Categorias como adult-content e gambling são aplicadas via blocklists especializadas. O SafeSearch é aplicado por reescrita de DNS. Ajustável por família. Observação técnica: tráfego DoH no navegador pode contornar o filtro — reduz drasticamente a exposição acidental, mas não é bloqueio absoluto."
 }
