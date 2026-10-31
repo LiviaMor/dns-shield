@@ -1,0 +1,42 @@
+# DNS Shield — Edge Node
+# Sobe Pi-hole (DNS + DHCP) e o atualizador de DDNS em um Raspberry Pi 2 (ARMv7).
+# Perfil enxuto: limites de memória para caber nos 1GB de RAM do Pi 2.
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    # network_mode "host" é obrigatório para o Pi-hole atuar como servidor DHCP:
+    # ele precisa enxergar os dispositivos reais da LAN (PCs, impressoras, celulares)
+    # em vez de ficar isolado na rede virtual do Docker.
+    network_mode: "host"
+    environment:
+      TZ: ${TZ:-America/Sao_Paulo}
+      # Senha do painel admin do Pi-hole (defina no .env).
+      FTLCONF_webserver_api_password: ${WEBPASSWORD:?defina WEBPASSWORD no .env}
+      # Habilita o servidor DHCP embutido do Pi-hole.
+      FTLCONF_dhcp_active: "true"
+      FTLCONF_dhcp_start: ${DHCP_START:-192.168.1.100}
+      FTLCONF_dhcp_end: ${DHCP_END:-192.168.1.200}
+      FTLCONF_dhcp_router: ${DHCP_ROUTER:-192.168.1.1}
+    volumes:
+      - "./etc-pihole:/etc/pihole"
+    cap_add:
+      # NET_ADMIN: capability de kernel obrigatória para o container distribuir IPs (DHCP).
+      - NET_ADMIN
+    restart: unless-stopped
+    # Limites de recurso para o Raspberry Pi 2.
+    mem_limit: 512m
+    mem_reservation: 256m
+
+  ddns:
+    container_name: ddns-updater
+    image: pboehm/ddns:latest
+    environment:
+      # Endpoint do seu serviço DDNS + token exclusivo da clínica (defina no .env).
+      - DDNS_URL=${DDNS_URL:?defina DDNS_URL no .env}
+    restart: unless-stopped
+    mem_limit: 64m
+    mem_reservation: 32m
+    depends_on:
+      - pihole

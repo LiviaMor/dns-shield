@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+cloud-backend/dist/
+
+# Secrets / env
+.env
+*.env
+!.env.example
+
+# Local data (SQLite + Pi-hole volumes)
+data/
+cloud-backend/data/
+edge-node/etc-pihole/
+edge-node/etc-dnsmasq.d/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Logs / OS
+*.log
+.DS_Store
