@@ -1,0 +1,25 @@
+{
+  "id": "clinica-lgpd",
+  "nome": "Clínica — Segurança + LGPD",
+  "descricao": "Perfil B2B focado em continuidade operacional e conformidade: prioriza bloqueio de phishing/ransomware e reduz exfiltração/telemetria.",
+  "publico": "b2b",
+  "categoriasBloqueadas": [
+    "phishing",
+    "malware",
+    "ransomware-c2",
+    "dns-tunneling",
+    "trackers",
+    "telemetry",
+    "ads",
+    "newly-registered-domains"
+  ],
+  "blocklists": [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+  ],
+  "relatorioLgpd": {
+    "ativo": true,
+    "frequencia": "mensal",
+    "descricao": "Gera resumo mensal de ameaças bloqueadas como prova de diligência."
+  },
+  "observacao": "Foco em não paralisar a agenda e documentar medidas técnicas de segurança."
+}

@@ -241,6 +241,11 @@ LLM_MODEL=llama3.2        # use llama3.2:1b em hardware mais fraco (ex.: Raspber
 > Sem `--profile ai`, a demo roda normal e grátis, 100% heurística. O Llama é um
 > **upgrade opcional** que melhora a experiência sem comprometer a privacidade.
 
+> 🔒 **Como conciliamos IA central com privacidade total:** veja
+> [`docs/arquitetura-privacidade.md`](docs/arquitetura-privacidade.md) — o modelo
+> "inteligência desce, dados do cliente nunca sobem", a base de conhecimento
+> ([`knowledge-base/`](knowledge-base/)) e os perfis (incl. controle parental).
+
 ## 9. Quick Start (produção / Raspberry Pi)
 
 ### 9.1 Edge (no Raspberry Pi)

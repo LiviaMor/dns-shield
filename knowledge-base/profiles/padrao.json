@@ -1,0 +1,17 @@
+{
+  "id": "padrao",
+  "nome": "Padrão — Proteção Essencial",
+  "descricao": "Perfil base: bloqueia ameaças comuns, anúncios e rastreadores. Ponto de partida para qualquer cliente.",
+  "publico": "geral",
+  "categoriasBloqueadas": [
+    "phishing",
+    "malware",
+    "ransomware-c2",
+    "trackers",
+    "ads"
+  ],
+  "blocklists": [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+  ],
+  "observacao": "Perfil seguro para começar; pode ser trocado por família ou clínica."
+}

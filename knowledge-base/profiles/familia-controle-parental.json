@@ -1,0 +1,26 @@
+{
+  "id": "familia-controle-parental",
+  "nome": "Família — Controle Parental",
+  "descricao": "Proteção para o lar com controle parental: bloqueia ameaças, rastreadores e categorias impróprias para crianças.",
+  "publico": "b2c",
+  "categoriasBloqueadas": [
+    "phishing",
+    "malware",
+    "ransomware-c2",
+    "trackers",
+    "telemetry",
+    "ads",
+    "adult-content",
+    "gambling",
+    "violence"
+  ],
+  "blocklists": [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts"
+  ],
+  "horarioEscolar": {
+    "ativo": false,
+    "descricao": "Opcional: bloquear redes sociais/jogos em horários definidos.",
+    "janelas": []
+  },
+  "observacao": "Categorias como adult-content e gambling são aplicadas via blocklists especializadas. Ajustável por família."
+}

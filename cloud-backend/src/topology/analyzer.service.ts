@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TopologyDto } from './dto/topology.dto';
+import { KnowledgeService } from '../knowledge/knowledge.service';
 
 export interface SecurityPlan {
   /** IP estático sugerido para o gateway DNS Shield. */
@@ -35,6 +36,8 @@ export class AnalyzerService {
   private readonly llmUrl =
     process.env.LLM_API_URL ?? 'http://localhost:11434';
   private readonly llmModel = process.env.LLM_MODEL ?? 'llama3.2';
+
+  constructor(private readonly knowledge: KnowledgeService) {}
 
   async analyze(topology: TopologyDto): Promise<SecurityPlan> {
     // Base heurística: sempre calculada (é o fallback e a fonte dos perfis).
@@ -105,8 +108,21 @@ export class AnalyzerService {
     const summary = Object.entries(base.profiles)
       .map(([profile, ips]) => `- ${profile}: ${ips.length} dispositivo(s)`)
       .join('\n');
+    // RAG: injeta o conhecimento curado da base central (ameaças/LGPD) para o
+    // Llama raciocinar com informação sempre atualizada, sem re-treino.
+    let context = '';
+    try {
+      context = this.knowledge.getKnowledgeContext().slice(0, 4000);
+    } catch {
+      context = '';
+    }
     return [
       'Você é um assistente de segurança de redes para leigos.',
+      context
+        ? 'Use o CONHECIMENTO abaixo (curado pela nossa base) como referência:\n' +
+          context +
+          '\n---'
+        : '',
       'Com base no resumo da rede abaixo, escreva uma mensagem curta (até 3',
       'frases), amigável e sem jargão, orientando o cliente a ativar a proteção',
       'conectando os aparelhos na rede Wi-Fi "DNS-Shield". Responda apenas com a',

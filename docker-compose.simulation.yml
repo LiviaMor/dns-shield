@@ -22,6 +22,7 @@ services:
     environment:
       PORT: "3000"
       DB_PATH: "/app/data/dns-shield.db"
+      KNOWLEDGE_DIR: "/app/knowledge-base"
       # IA local (Llama via Ollama). Ative com o profile 'ai' (ver README).
       # Privacidade: a inferência roda localmente; nada sai do dispositivo.
       LLM_ENABLED: ${LLM_ENABLED:-false}
@@ -29,6 +30,8 @@ services:
       LLM_MODEL: ${LLM_MODEL:-llama3.2}
     volumes:
       - backend-data:/app/data
+      # Base de conhecimento central montada (atualizável sem rebuild da imagem).
+      - ./knowledge-base:/app/knowledge-base:ro
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
       interval: 5s

@@ -1,0 +1,8 @@
+{
+  "version": "2026.10.31",
+  "updatedAt": "2026-10-31T00:00:00Z",
+  "profiles": ["padrao", "familia-controle-parental", "clinica-lgpd"],
+  "threatDocs": ["phishing", "malware-ransomware", "trackers-telemetry"],
+  "compliance": ["lgpd"],
+  "notes": "Base de conhecimento central. Clientes baixam atualizações; dados de cliente nunca sobem."
+}
