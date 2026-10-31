@@ -285,7 +285,38 @@ Nada disso é necessário para o MVP. Quando o número de locais gerenciados cre
 3. **IA:** aponte `LLM_API_URL` para um Ollama self-host (open source) e refine a classificação no `AnalyzerService`.
 4. **Deploy:** empacote o mesmo backend em container e suba em Kubernetes/serverless.
 
-## 12. Contribuindo
+### Acesso remoto (escalabilidade futura)
+
+Gerenciar o painel de fora de casa, sem abrir portas no modem do cliente:
+
+- **Túnel reverso** (ex.: Tailscale ou WireGuard): o aparelho abre uma conexão
+  de *saída* para a nuvem (que o modem sempre permite), criando um canal seguro
+  de gestão remota. **Zero configuração de modem** — mantém o plug-and-play.
+- **DDNS** (`ddns-client` já presente): dá um nome fixo (`casa-cliente.suaempresa.com`)
+  mesmo com IP dinâmico.
+- **Importante (distinção):** acessar o painel de fora é **gestão remota** — não
+  protege o seu celular na rua. Para o dispositivo ficar filtrado fora de casa é
+  preciso **proteção em roaming** via DNS-over-HTTPS/TLS (DoH/DoT) ou VPN de volta
+  à rede — uma evolução separada.
+
+## 12. O que o DNS Shield é (e não é)
+
+Comparação para posicionamento — útil no pitch e para responder objeções:
+
+| Tecnologia | O que faz | Relação com o DNS Shield |
+|---|---|---|
+| **DNS Shield** | Filtra **para onde os dispositivos vão** (bloqueia domínios de anúncio/malware/phishing na camada de DNS) | — |
+| **WAF** (Web Application Firewall) | Protege **um site que você hospeda** de ataques HTTP (SQLi, XSS) que *entram* | Diferente e **complementar** — WAF olha quem chega ao seu servidor; nós olhamos para onde os aparelhos vão |
+| **VPN** | **Criptografa/esconde** o caminho do tráfego | Complementar — VPN esconde a origem; nós bloqueamos o destino perigoso |
+| **Firewall de pacotes** | Bloqueia por IP/porta | Camada mais baixa; nós agimos por **domínio** |
+| **NextDNS / Cisco Umbrella / Cloudflare Gateway** | DNS security / Secure Web Gateway | **Mesma categoria** — somos a versão open source, plug-and-play e gerenciável |
+| **Pi-hole** | Motor de bloqueio por DNS | Nós **usamos** o Pi-hole por baixo e entregamos como produto gerenciado |
+
+> **Categoria técnica:** DNS Filtering / Secure Web Gateway (SWG) na camada de DNS.
+> **Não é** WAF, nem firewall de pacotes, nem antivírus — é a primeira linha de
+> defesa, a mais custo-efetiva, e a única plug-and-play.
+
+## 13. Contribuindo
 
 Projeto open source sob licença MIT — contribuições são bem-vindas (Hacktoberfest-friendly 🎃).
 
@@ -293,6 +324,6 @@ Projeto open source sob licença MIT — contribuições são bem-vindas (Hackto
 2. Rode o build/testes do backend (`cd cloud-backend && npm run build`).
 3. Abra um Pull Request descrevendo a mudança.
 
-## 13. Licença
+## 14. Licença
 
 [MIT](LICENSE) — use, modifique e distribua livremente.
