@@ -13,9 +13,13 @@ serviço pago. A nuvem é um caminho de escala, não um requisito.
 
 | Componente | Papel |
 |---|---|
-| **Pi-hole** | Servidor DNS + DHCP. Filtra domínios maliciosos e distribui IPs da LAN. |
-| **pboehm/ddns** | Mantém um domínio apontando para o IP público dinâmico da clínica. |
+| **hostapd** | Transforma o Pi num Access Point Wi-Fi ("DNS-Shield"). É o que torna o produto plug-and-play: quem conecta no Wi-Fi do Pi usa o Pi-hole como DNS sem tocar no modem. |
+| **Pi-hole** | Servidor DNS + DHCP da rede Wi-Fi do Pi. Filtra domínios maliciosos e de anúncios (sinkhole) e distribui IPs. |
+| **ddns-client** | Cliente leve (`curl` periódico) que reporta o IP público do Pi ao servidor DDNS na nuvem. |
 | **network_discovery.py** | Varre a rede (nmap → arp-scan → tabela ARP), descobre o gateway e classifica dispositivos. |
+
+> O **servidor** `pboehm/ddns` (PowerDNS) roda na nuvem, não no Pi — é ele que
+> recebe as atualizações do `ddns-client` e resolve os domínios dinâmicos.
 
 ### Backend (NestJS — local ou nuvem)
 

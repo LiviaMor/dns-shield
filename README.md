@@ -39,47 +39,78 @@ O DNS Shield foi desenhado para **funcionar completo sem nuvem** e **escalar par
 
 ## 3. Arquitetura (Edge + Cloud opcional)
 
+O coração do plug-and-play é o **hostapd**: o Raspberry Pi cria a sua própria
+rede Wi-Fi. Todo dispositivo que conecta nela recebe o **Pi-hole como DNS
+automaticamente** — **sem ninguém precisar alterar o DNS ou o DHCP do modem da
+operadora**. É isso que faz o bloqueio realmente acontecer.
+
 ```
-┌─────────────────────── CLÍNICA (Edge — obrigatório) ─────────────┐
-│  Raspberry Pi 2 (ARMv7)                                           │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────────┐      │
-│  │   Pi-hole    │   │ pboehm/ddns  │   │ network_discovery│      │
-│  │ DNS + DHCP   │   │  IP dinâmico │   │   (nmap/arp)     │      │
-│  └──────┬───────┘   └──────┬───────┘   └────────┬─────────┘      │
-└─────────┼──────────────────┼────────────────────┼────────────────┘
-          │ bloqueio local   │ túnel DDNS          │ topologia
-          ▼                  ▼                     ▼
+        ┌──────────────── Raspberry Pi (o produto) ─────────────────┐
+Modem ──┤ eth0 (uplink/internet)                                     │
+        │                                                            │
+        │  hostapd ── cria ──▶ Wi-Fi "DNS-Shield"                    │
+        │     │                                                      │
+        │     └─▶ dispositivos conectam e recebem via DHCP:          │
+        │          • IP local (192.168.50.x)                         │
+        │          • DNS = Pi-hole  ◄── as consultas passam por aqui │
+        │                               e anúncios/malware são        │
+        │  Pi-hole (DNS + bloqueio)        bloqueados (sinkhole)      │
+        │  network_discovery (nmap/arp)  ── mapeia a rede            │
+        │  ddns-client ── reporta IP público ──▶ seu backend         │
+        └─────────────────────────┬───────────────────────────────── ┘
+                                  │ topologia + acesso remoto
+                                  ▼
 ┌─────────── BACKEND (local no Pi OU na nuvem — mesmo código) ──────┐
 │  API NestJS  ──▶  SQLite (local)  ──ou──▶  Postgres (nuvem)       │
-│       │                                                           │
 │       ├──▶ Analyzer (heurística local)  ──ou──▶  LLM (opcional)   │
-│       └──▶ Outbox  ──▶  WhatsApp (instruções ao gestor)           │
+│       └──▶ Outbox  ──▶  WhatsApp (onboarding do cliente)          │
+│  Servidor DDNS (pboehm/ddns)  ──recebe o IP do Pi──▶ domínio din. │
 └────────────────────────────────────────────────────────────────── ┘
 ```
 
-### Edge (Raspberry Pi 2 — ARMv7) — o coração plug-and-play
-- **Pi-hole:** servidor DNS **e** DHCP (substitui o DHCP travado do modem da operadora), filtrando o tráfego localmente.
-- **pboehm/ddns:** container que mantém o IP dinâmico atualizado, garantindo acesso remoto seguro.
-- **Network Scanner:** `network_discovery.py` varre a rede, descobre o gateway e classifica dispositivos.
+### Edge (Raspberry Pi) — o coração plug-and-play
+- **hostapd:** transforma o Pi num **ponto de acesso Wi-Fi** ("DNS-Shield"). É a
+  peça que resolve o atrito: o cliente só conecta no Wi-Fi do Pi — **não mexe no
+  modem**. Quem conecta usa o Pi-hole como DNS automaticamente.
+- **Pi-hole:** servidor **DNS + DHCP** da rede Wi-Fi do Pi. Faz o bloqueio
+  (sinkhole) de anúncios, rastreadores, phishing e malware na origem.
+- **network_discovery.py:** varre a rede, descobre o gateway e classifica
+  dispositivos (PC, câmera, TV, impressora).
+- **ddns-client:** cliente leve (`curl` periódico) que reporta o IP público do Pi
+  ao **servidor DDNS** (`pboehm/ddns`) na sua nuvem — garante acesso remoto mesmo
+  com IP dinâmico. O servidor `pboehm/ddns` roda do lado da nuvem, não no Pi.
 
 ### Backend (NestJS) — roda no Pi ou na nuvem
-- **API multi-tenant:** isola os dados de cada clínica (escopo por `X-Tenant-Id`).
-- **Analyzer:** separa estações de trabalho de dispositivos IoT (câmeras, Smart TVs) e sugere um IP estático livre para o gateway. Heurístico por padrão; plugável a um LLM.
-- **Onboarding (outbox → WhatsApp):** registra o passo a passo para o gestor desativar o DHCP do roteador principal.
+- **API multi-tenant:** isola os dados de cada cliente (escopo por `X-Tenant-Id`).
+- **Analyzer:** separa estações de trabalho de dispositivos IoT (câmeras, Smart
+  TVs) e sugere um IP estático livre. Heurístico por padrão; plugável a um LLM.
+- **Onboarding (outbox → WhatsApp):** confirma ao cliente que o gateway está
+  online e orienta a conectar os aparelhos no Wi-Fi "DNS-Shield".
+
+> **Por que não bastava só o Pi-hole?** O Pi-hole apenas *bloqueia* — ele fica
+> parado esperando receber consultas DNS. Sem alguém apontar os dispositivos
+> para ele (mexendo no modem ou em cada aparelho), ele não bloqueia nada. O
+> **hostapd** é o que entrega as consultas ao Pi-hole sem tocar no modem. Pi-hole
+> = bloqueador; hostapd = o que força o tráfego a passar pelo bloqueador.
 
 ## 4. Fluxo de Onboarding (Experiência do Cliente)
 
-1. **Física:** a recepção conecta o Raspberry Pi ao roteador (rede + energia).
-2. **Descoberta:** o container sobe, executa `network_discovery.py` e envia a topologia para o backend.
-3. **Decisão:** o Analyzer separa computadores de Smart TVs e aloca um IP estático livre para o gateway.
-4. **Comunicação:** o sistema registra um WhatsApp automatizado: *"Equipamento online. Para ativar a segurança LGPD, desative o DHCP do seu roteador seguindo estas 3 telas..."*
+1. **Física:** o cliente liga o Pi na tomada e conecta o cabo ao modem (uplink).
+2. **Wi-Fi:** o Pi cria a rede **"DNS-Shield"**. O cliente conecta o celular/PC/TV
+   nessa rede — e só. **Nenhuma senha de modem, nenhum DNS para alterar.**
+3. **Descoberta:** o Pi executa `network_discovery.py` e envia a topologia ao backend.
+4. **Comunicação:** o sistema confirma via WhatsApp: *"Gateway online. Conecte
+   seus aparelhos na rede Wi-Fi DNS-Shield e sua proteção já está ativa."*
 
 ## 5. Estrutura do Repositório
 
 ```
 dns-shield/
 ├── edge-node/                  # Infra local (roda no Raspberry Pi ou qualquer host Docker)
-│   ├── docker-compose.yml      # Pi-hole (host/DHCP) + DDNS, enxuto para RAM do Pi 2
+│   ├── docker-compose.yml      # Pi-hole (DNS+DHCP) + cliente DDNS
+│   ├── hostapd/                # Access Point Wi-Fi (o que torna plug-and-play)
+│   │   ├── hostapd.conf        # Config da rede Wi-Fi "DNS-Shield"
+│   │   └── setup-access-point.sh  # Setup no Pi (hostapd + NAT eth0<->wlan0)
 │   ├── Dockerfile.discovery    # Agente de descoberta de rede (container)
 │   ├── .env.example            # Variáveis de ambiente, tokens de DDNS
 │   └── scripts/
@@ -174,16 +205,30 @@ python3 -m http.server 8088   # abre em http://localhost:8088
 
 ## 9. Quick Start (produção / Raspberry Pi)
 
-### 9.1 Edge (no local protegido)
+### 9.1 Edge (no Raspberry Pi)
 
+**Passo 1 — transformar o Pi em Access Point Wi-Fi (uma vez):**
 ```bash
 cd edge-node
+sudo ./hostapd/setup-access-point.sh     # instala hostapd + NAT, cria o Wi-Fi "DNS-Shield"
+```
+
+**Passo 2 — subir Pi-hole + cliente DDNS:**
+```bash
 cp .env.example .env            # preencha WEBPASSWORD e DDNS_URL
 docker compose up -d
 ```
 
-> **`network_mode: host`** é o que permite o DHCP funcionar — o Pi-hole precisa enxergar os dispositivos reais da rede.
+> **`network_mode: host`** permite o Pi-hole enxergar a interface `wlan0` do hostapd e servir DHCP/DNS.
 > **`NET_ADMIN`** é a capability de kernel obrigatória para distribuir IPs.
+
+**Passo 3 — testar o bloqueio (conecte um celular no Wi-Fi "DNS-Shield"):**
+```bash
+# No próprio Pi, confirme que anúncios são bloqueados (retorna 0.0.0.0):
+dig doubleclick.net @127.0.0.1
+# e que sites normais resolvem normalmente:
+dig github.com @127.0.0.1
+```
 
 Varredura da rede e envio ao backend:
 

@@ -1,42 +1,60 @@
-# DNS Shield — Edge Node
-# Sobe Pi-hole (DNS + DHCP) e o atualizador de DDNS em um Raspberry Pi 2 (ARMv7).
-# Perfil enxuto: limites de memória para caber nos 1GB de RAM do Pi 2.
+# DNS Shield — Edge Node (Raspberry Pi real)
+#
+# Arquitetura plug-and-play: o Pi cria sua própria rede Wi-Fi via hostapd
+# (ver hostapd/setup-access-point.sh) e o Pi-hole é o DNS + DHCP dessa rede.
+# Assim, qualquer dispositivo que conecta no Wi-Fi "DNS-Shield" passa pelo
+# Pi-hole SEM ninguém tocar no modem da operadora.
+#
+# Pré-requisito: rodar uma vez `sudo ./hostapd/setup-access-point.sh` no Pi.
 
 services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
-    # network_mode "host" é obrigatório para o Pi-hole atuar como servidor DHCP:
-    # ele precisa enxergar os dispositivos reais da LAN (PCs, impressoras, celulares)
-    # em vez de ficar isolado na rede virtual do Docker.
+    # host mode: o Pi-hole precisa enxergar a interface wlan0 (rede do hostapd)
+    # para servir DHCP e DNS aos dispositivos conectados ao Wi-Fi do Pi.
     network_mode: "host"
     environment:
       TZ: ${TZ:-America/Sao_Paulo}
-      # Senha do painel admin do Pi-hole (defina no .env).
       FTLCONF_webserver_api_password: ${WEBPASSWORD:?defina WEBPASSWORD no .env}
-      # Habilita o servidor DHCP embutido do Pi-hole.
+      # DHCP para a rede Wi-Fi criada pelo hostapd (192.168.50.0/24).
       FTLCONF_dhcp_active: "true"
-      FTLCONF_dhcp_start: ${DHCP_START:-192.168.1.100}
-      FTLCONF_dhcp_end: ${DHCP_END:-192.168.1.200}
-      FTLCONF_dhcp_router: ${DHCP_ROUTER:-192.168.1.1}
+      FTLCONF_dhcp_start: ${DHCP_START:-192.168.50.100}
+      FTLCONF_dhcp_end: ${DHCP_END:-192.168.50.200}
+      # O gateway é o próprio Pi (IP do AP configurado no setup).
+      FTLCONF_dhcp_router: ${DHCP_ROUTER:-192.168.50.1}
+      # Só escuta na interface do Wi-Fi do Pi (não no uplink).
+      FTLCONF_dns_listeningMode: "single"
     volumes:
       - "./etc-pihole:/etc/pihole"
     cap_add:
-      # NET_ADMIN: capability de kernel obrigatória para o container distribuir IPs (DHCP).
       - NET_ADMIN
     restart: unless-stopped
-    # Limites de recurso para o Raspberry Pi 2.
     mem_limit: 512m
     mem_reservation: 256m
 
-  ddns:
-    container_name: ddns-updater
-    image: pboehm/ddns:latest
+  # Cliente DDNS: reporta periodicamente o IP público do Pi para o SEU servidor
+  # DDNS (ex.: uma instância de pboehm/ddns na sua nuvem). Garante acesso remoto
+  # mesmo com IP dinâmico da operadora. É um cliente leve (curl em loop), não o
+  # servidor — o servidor pboehm/ddns roda na nuvem (ver docs/arquitetura.md).
+  ddns-client:
+    container_name: ddns-client
+    image: curlimages/curl:latest
     environment:
-      # Endpoint do seu serviço DDNS + token exclusivo da clínica (defina no .env).
-      - DDNS_URL=${DDNS_URL:?defina DDNS_URL no .env}
+      - DDNS_UPDATE_URL=${DDNS_URL:?defina DDNS_URL no .env}
+      - DDNS_INTERVAL=${DDNS_INTERVAL:-300}
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo "[ddns-client] atualizando a cada $${DDNS_INTERVAL}s -> $${DDNS_UPDATE_URL}"
+        while true; do
+          curl -fsS "$${DDNS_UPDATE_URL}" >/dev/null 2>&1 \
+            && echo "[ddns-client] IP atualizado $$(date -u +%FT%TZ)" \
+            || echo "[ddns-client] falha ao atualizar $$(date -u +%FT%TZ)"
+          sleep "$${DDNS_INTERVAL}"
+        done
     restart: unless-stopped
-    mem_limit: 64m
-    mem_reservation: 32m
+    mem_limit: 32m
     depends_on:
       - pihole
