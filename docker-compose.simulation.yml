@@ -22,6 +22,11 @@ services:
     environment:
       PORT: "3000"
       DB_PATH: "/app/data/dns-shield.db"
+      # IA local (Llama via Ollama). Ative com o profile 'ai' (ver README).
+      # Privacidade: a inferência roda localmente; nada sai do dispositivo.
+      LLM_ENABLED: ${LLM_ENABLED:-false}
+      LLM_API_URL: "http://ollama:11434"
+      LLM_MODEL: ${LLM_MODEL:-llama3.2}
     volumes:
       - backend-data:/app/data
     healthcheck:
@@ -107,6 +112,32 @@ services:
       - cloud-backend
     restart: unless-stopped
 
+  # IA LOCAL (Llama via Ollama) — opcional, só sobe com o profile "ai":
+  #   docker compose -f docker-compose.simulation.yml --profile ai up -d
+  # Privacidade por design: a análise da rede roda aqui, no próprio ambiente do
+  # cliente. Nenhum dado de rede é enviado a nuvens de terceiros.
+  ollama:
+    image: ollama/ollama:latest
+    container_name: dns-shield-ollama
+    profiles: ["ai"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    # Baixa o modelo Llama no primeiro start e mantém o servidor rodando.
+    entrypoint:
+      - sh
+      - -c
+      - |
+        ollama serve &
+        sleep 5
+        ollama pull "$${LLM_MODEL:-llama3.2}" || true
+        wait
+    environment:
+      - LLM_MODEL=${LLM_MODEL:-llama3.2}
+    restart: unless-stopped
+
 volumes:
   backend-data:
   pihole-etc:
+  ollama-models:

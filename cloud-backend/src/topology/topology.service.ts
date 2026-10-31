@@ -32,7 +32,7 @@ export class TopologyService {
       devices: topology.devices,
     });
 
-    const plan = this.analyzer.analyze(topology);
+    const plan = await this.analyzer.analyze(topology);
 
     this.onboarding.enqueueInstructions(tenantId, plan);
 

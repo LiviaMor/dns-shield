@@ -214,6 +214,33 @@ python3 -m http.server 8088   # abre em http://localhost:8088
 > [`docs/teste-local.md`](docs/teste-local.md) e a pasta [`local-test/`](local-test/) —
 > inclui como rodar e **como reverter** o DNS com segurança.
 
+## 8.1 IA Local com Llama — privacidade por design
+
+A análise da rede e a geração das mensagens de onboarding podem ser feitas por um
+**LLM local (Llama via [Ollama](https://ollama.com))** rodando **no próprio
+ambiente do cliente**. Isso é um diferencial de **privacidade**:
+
+- Os dados da rede (IPs, MACs, dispositivos) **nunca saem** do dispositivo — não
+  há chamada a nuvens de IA de terceiros (OpenAI, etc.).
+- Funciona **offline**. Se o Llama estiver indisponível, o sistema **cai na
+  heurística local** automaticamente — nunca quebra e nunca vaza dados.
+- Open source de ponta a ponta (Llama + Ollama + Pi-hole).
+
+Ativar na demo (baixa o modelo Llama, ~2 GB, no primeiro uso):
+```bash
+LLM_ENABLED=true docker compose -f docker-compose.simulation.yml --profile ai up -d
+```
+
+Config por ambiente (`cloud-backend/.env`):
+```
+LLM_ENABLED=true
+LLM_API_URL=http://ollama:11434
+LLM_MODEL=llama3.2        # use llama3.2:1b em hardware mais fraco (ex.: Raspberry Pi)
+```
+
+> Sem `--profile ai`, a demo roda normal e grátis, 100% heurística. O Llama é um
+> **upgrade opcional** que melhora a experiência sem comprometer a privacidade.
+
 ## 9. Quick Start (produção / Raspberry Pi)
 
 ### 9.1 Edge (no Raspberry Pi)

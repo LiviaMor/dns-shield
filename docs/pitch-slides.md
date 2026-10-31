@@ -19,9 +19,7 @@ Regra de ouro: NÃO leia o slide. O slide é apoio; a fala está nas notas.
 Bloqueia golpes, malware e rastreadores **antes** de chegarem aos seus aparelhos.
 
 <!--
-Abertura (10s): "Uma clínica fica 4 dias sem atender porque alguém clicou num
-boleto falso e o ransomware travou a agenda. A gente impede esse clique de virar
-prejuízo — sem a clínica entender nada de tecnologia."
+Abertura (10s): "."
 -->
 
 ---

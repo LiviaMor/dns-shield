@@ -60,6 +60,10 @@ Um **gateway de segurança DNS plug-and-play**, entregue como serviço gerenciad
 (hostapd) + gestão remota + onboarding automatizado + relatórios**. O bloqueador
 é commodity; a **experiência sem atrito** é o produto.
 
+**Privacidade por design:** a análise da rede pode rodar com **IA local (Llama
+via Ollama)** no próprio dispositivo — os dados do cliente **nunca saem** para
+nuvens de terceiros. Se a IA não estiver disponível, cai na heurística local.
+
 > Demonstrável hoje: bloqueamos `doubleclick.net`, `ads.google.com` e
 > `googlesyndication.com` em tempo real — com relatório no painel.
 
