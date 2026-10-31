@@ -12,6 +12,14 @@ data/
 cloud-backend/data/
 edge-node/etc-pihole/
 edge-node/etc-dnsmasq.d/
+local-test/etc-pihole/
+
+# Runtime output — descoberta de rede (nmap/arp) e relatórios.
+# NUNCA versione: contém IPs/MACs reais do cliente, descobertos em runtime.
+*topology*.json
+*discovery*.json
+*report*.json
+scan-results/
 
 # Python
 __pycache__/

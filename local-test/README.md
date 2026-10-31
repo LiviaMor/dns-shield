@@ -28,7 +28,7 @@ cd local-test
 ## O que cada passo faz
 
 1. **up** — sobe o Pi-hole num container, DNS na porta 53, painel em
-   http://localhost:8090/admin (senha `demo1234`).
+   http://localhost:8090/admin (senha definida em `PIHOLE_PASSWORD`, padrão `changeme`).
 2. **test-block** — consulta o Pi-hole direto e mostra anúncio bloqueado
    (`0.0.0.0`) vs. site normal. Não precisa mudar nada no PC.
 3. **connect** — imprime o comando exato para apontar o DNS do seu sistema para

@@ -41,7 +41,7 @@ services:
       - "5353:53/udp"
     environment:
       TZ: "America/Sao_Paulo"
-      FTLCONF_webserver_api_password: "demo1234"
+      FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD:-changeme}
       FTLCONF_dns_listeningMode: "all"
     volumes:
       - pihole-etc:/etc/pihole
@@ -76,7 +76,7 @@ services:
       TENANT_ID: "clinica-demo"
       CLOUD_API_URL: "http://cloud-backend:3000/api"
       PIHOLE_URL: "http://pihole:80"
-      PIHOLE_PASSWORD: "demo1234"
+      PIHOLE_PASSWORD: ${PIHOLE_PASSWORD:-changeme}
       REPORT_INTERVAL: "30"
     entrypoint:
       - sh

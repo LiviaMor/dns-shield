@@ -231,6 +231,11 @@ def simulated_topology() -> list[Device]:
     Reproduz o cenário típico: roteador da operadora, PCs da recepção,
     impressora, câmera IoT e uma Smart TV — exatamente os dispositivos que o
     Analyzer precisa separar em perfis de segurança.
+
+    IMPORTANTE: estes IPs/MACs são EXEMPLOS fictícios, apenas para a demo. Em
+    produção nada disto é fixo no código — o scan (nmap/arp) descobre os dados
+    reais da rede do cliente em runtime, e esses dados NUNCA são versionados
+    (ver .gitignore). É isso que mantém o produto plug-and-play e privado.
     """
     return [
         Device(ip="192.168.1.1", mac="C8:3A:35:00:00:01",

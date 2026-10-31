@@ -177,7 +177,7 @@ Pré-requisito: Docker Desktop **ou** OrbStack rodando. Ao final:
 | Serviço | URL |
 |---|---|
 | **Painel do cliente** | http://localhost:8088 |
-| Painel do Pi-hole | http://localhost:8080/admin (senha: `demo1234`) |
+| Painel do Pi-hole | http://localhost:8080/admin (senha definida em `PIHOLE_PASSWORD`) |
 | API | http://localhost:3000/api |
 
 > **Nota honesta sobre o DHCP:** no Raspberry Pi real o Pi-hole roda em

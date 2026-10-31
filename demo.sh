@@ -55,7 +55,7 @@ show_flow() {
   echo "============================================================"
   echo "============================================================"
   echo "Painel do cliente:  http://localhost:8088"
-  echo "Painel do Pi-hole:  http://localhost:8080/admin  (senha: demo1234)"
+  echo "Painel do Pi-hole:  http://localhost:8080/admin  (senha: a definida em PIHOLE_PASSWORD)"
   echo "API:                $API"
   echo "------------------------------------------------------------"
   echo "3) Teste de DNS real pelo Pi-hole:"

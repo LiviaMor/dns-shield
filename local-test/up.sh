@@ -24,7 +24,7 @@ done
 echo
 echo "============================================================"
 echo " Pi-hole local no ar."
-echo "   Painel:  http://localhost:8090/admin   (senha: demo1234)"
+echo "   Painel:  http://localhost:8090/admin   (senha: a definida em PIHOLE_PASSWORD)"
 echo "   DNS:     porta 53 deste computador"
 echo
 echo " Próximo passo:  ./connect.sh   (como apontar o DNS)"

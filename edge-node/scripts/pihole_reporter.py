@@ -12,7 +12,7 @@ Fluxo:
     4. POST {backend}/api/reports    -> grava o relatório (escopo por tenant)
 
 Uso:
-    PIHOLE_URL=http://127.0.0.1 PIHOLE_PASSWORD=demo1234 \\
+    PIHOLE_URL=http://127.0.0.1 PIHOLE_PASSWORD=sua-senha \\
     CLOUD_API_URL=http://localhost:3000/api TENANT_ID=clinica-demo \\
     python3 pihole_reporter.py
 """

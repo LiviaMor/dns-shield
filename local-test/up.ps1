@@ -16,7 +16,7 @@ Start-Sleep -Seconds 30
 Write-Host ''
 Write-Host '============================================================'
 Write-Host ' Pi-hole local no ar.'
-Write-Host '   Painel:  http://localhost:8090/admin   (senha: demo1234)'
+Write-Host '   Painel:  http://localhost:8090/admin   (senha: a definida em PIHOLE_PASSWORD)'
 Write-Host '   DNS:     porta 53 deste computador'
 Write-Host ''
 Write-Host ' Proximo passo:  .\connect.ps1   (como apontar o DNS)'
