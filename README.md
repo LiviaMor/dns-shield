@@ -203,6 +203,10 @@ cd frontend
 python3 -m http.server 8088   # abre em http://localhost:8088
 ```
 
+> **Testar o bloqueio no seu próprio PC** (sem Raspberry Pi): veja o guia
+> [`docs/teste-local.md`](docs/teste-local.md) e a pasta [`local-test/`](local-test/) —
+> inclui como rodar e **como reverter** o DNS com segurança.
+
 ## 9. Quick Start (produção / Raspberry Pi)
 
 ### 9.1 Edge (no Raspberry Pi)

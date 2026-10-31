@@ -49,6 +49,6 @@ cd local-test
   plug-and-play (Wi-Fi automático via hostapd) só existe no Raspberry Pi.
 - **Sempre reverta o DNS** quando terminar: se você parar o container sem
   reverter, o PC fica sem resolver nomes. Os comandos de reversão estão no
-  `connect`.
+  `connect` e no guia completo [`../docs/teste-local.md`](../docs/teste-local.md).
 - Parar e remover: `docker compose down` (nesta pasta). Adicione `-v` para
   apagar os dados do Pi-hole local.
