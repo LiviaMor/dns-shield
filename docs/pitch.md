@@ -2,6 +2,9 @@
 
 > Roteiro de apresentação. Tempo-alvo: **3 minutos**. Os tempos entre colchetes
 > são um guia para ensaiar. Fale com números e com a dor — não com tecnologia.
+>
+> 🖼️ **Versão em slides:** [`pitch-slides.md`](pitch-slides.md) (um slide por
+> seção, pronto para Canva/PowerPoint ou Marp).
 
 ---
 
