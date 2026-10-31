@@ -1,0 +1,80 @@
+# DNS Shield — SIMULAÇÃO / DEMO (Mac, Linux e Windows)
+#
+# Sobe o fluxo completo SEM precisar de Raspberry Pi nem acesso à LAN física:
+#   1. cloud-backend : API NestJS (SQLite local)            -> http://localhost:3000
+#   2. pihole        : servidor DNS + painel admin          -> http://localhost:8080/admin
+#   3. edge-discovery: varre uma topologia de clínica (sim) e envia ao backend
+#
+# IMPORTANTE (demo honesta): no Raspberry Pi real o Pi-hole roda em
+# network_mode "host" e assume o DHCP da rede. No Docker Desktop (Mac/Windows)
+# isso NÃO é possível — o Docker roda numa VM isolada, sem acesso de camada 2
+# à sua rede. Por isso a simulação usa uma topologia fictícia (--simulate) e o
+# Pi-hole roda em modo bridge só para demonstrar DNS + painel.
+
+services:
+  cloud-backend:
+    build:
+      context: ./cloud-backend
+      dockerfile: Dockerfile
+    container_name: dns-shield-backend
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      DB_PATH: "/app/data/dns-shield.db"
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  pihole:
+    image: pihole/pihole:latest
+    container_name: dns-shield-pihole
+    # Modo bridge para a demo (DHCP real só funciona no Pi em network_mode host).
+    ports:
+      - "8080:80/tcp"     # painel admin -> http://localhost:8080/admin
+      - "5353:53/tcp"     # DNS (porta alta para não conflitar com o host)
+      - "5353:53/udp"
+    environment:
+      TZ: "America/Sao_Paulo"
+      FTLCONF_webserver_api_password: "demo1234"
+      FTLCONF_dns_listeningMode: "all"
+    volumes:
+      - pihole-etc:/etc/pihole
+    restart: unless-stopped
+
+  edge-discovery:
+    build:
+      context: ./edge-node
+      dockerfile: Dockerfile.discovery
+    container_name: dns-shield-discovery
+    environment:
+      TENANT_ID: "clinica-demo"
+      CLOUD_API_URL: "http://cloud-backend:3000/api"
+      SIMULATE: "true"
+      SEND: "true"
+      SEND_RETRIES: "15"
+    depends_on:
+      cloud-backend:
+        condition: service_started
+    # Roda uma vez, envia a topologia e encerra.
+    restart: "no"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dns-shield-frontend
+    ports:
+      - "8088:80"     # painel do cliente -> http://localhost:8088
+    depends_on:
+      - cloud-backend
+    restart: unless-stopped
+
+volumes:
+  backend-data:
+  pihole-etc:

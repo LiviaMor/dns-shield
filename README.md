@@ -1,8 +1,10 @@
 # DNS Shield — Gateway de Segurança DNS Plug-and-Play
 
-> Solução **open source** de proteção de rede na camada de DNS, focada em conformidade com a **LGPD** e defesa contra **ransomware** para clínicas odontológicas e médicas.
+> Solução **open source** de proteção de rede na camada de DNS, focada em privacidade, conformidade com a **LGPD** e defesa contra **ransomware e phishing**.
 >
-> **Plug-and-play:** conecte o dispositivo e funcione — sem nuvem obrigatória, sem custo de infraestrutura. Escala para a nuvem quando você precisar atender muitas clínicas.
+> **Para todos:** do consumidor final (casa, família, home office) à pequena empresa e ao mercado B2B/MSSP (clínicas, escritórios, comércio).
+>
+> **Plug-and-play:** conecte o dispositivo e funcione — sem nuvem obrigatória, sem custo de infraestrutura. Escala para a nuvem quando você precisar gerenciar muitos sites.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![MLH Hackathon](https://img.shields.io/badge/MLH-Hackathon-blue.svg)](https://mlh.io/)
@@ -12,10 +14,13 @@
 
 ## 1. Visão Geral do Produto
 
-Um **Gateway de Segurança DNS "Plug-and-Play"** que opera como serviço gerenciado (MSSP), interceptando ameaças na camada de rede antes que cheguem aos computadores da recepção.
+Um **Gateway de Segurança DNS "Plug-and-Play"** que intercepta ameaças na camada de rede antes que cheguem aos dispositivos — bloqueando phishing, malware, rastreadores e telemetria indesejada para **qualquer rede**.
 
-- **Proposta de Valor:** blindagem operacional com atrito zero. O cliente não gerencia painéis de TI — ele assina a tranquilidade de não ter a agenda paralisada por vazamento de dados.
-- **Plug-and-play:** conecte o Raspberry Pi ao roteador e pronto. O MVP roda 100% local, sem depender de nuvem paga.
+- **Dois públicos, o mesmo produto:**
+  - **Consumidor (B2C):** proteção e privacidade para a casa inteira (TVs, celulares, consoles, IoT) com instalação sem atrito — sem instalar app em cada aparelho. Bloqueio de anúncios, rastreadores e sites maliciosos para a família toda.
+  - **Empresa / MSSP (B2B):** blindagem operacional gerenciada para clínicas, escritórios e comércio, com relatórios de conformidade (LGPD) e gestão multi-tenant de vários locais.
+- **Proposta de Valor:** segurança com atrito zero. Ninguém precisa gerenciar painéis de TI — basta conectar o dispositivo à rede.
+- **Plug-and-play:** conecte o Raspberry Pi (ou qualquer host com Docker) ao roteador e pronto. O MVP roda 100% local, sem depender de nuvem paga.
 - **Open source:** todo o código é MIT. Qualquer pessoa pode auditar, rodar e contribuir.
 
 ## 2. Filosofia: local primeiro, nuvem opcional
@@ -30,7 +35,7 @@ O DNS Shield foi desenhado para **funcionar completo sem nuvem** e **escalar par
 | Deploy | **Docker Compose** no Raspberry Pi | Kubernetes / serverless |
 | Custo | **R$ 0** | sob demanda, só quando escalar |
 
-> O mesmo backend NestJS roda nos dois cenários. Você começa grátis e sobe para a nuvem apenas quando o volume de clínicas justificar.
+> O mesmo backend NestJS roda nos dois cenários — para um único lar ou para uma frota de locais gerenciados. Você começa grátis e sobe para a nuvem apenas quando o volume justificar.
 
 ## 3. Arquitetura (Edge + Cloud opcional)
 
@@ -73,8 +78,9 @@ O DNS Shield foi desenhado para **funcionar completo sem nuvem** e **escalar par
 
 ```
 dns-shield/
-├── edge-node/                  # Infra local da clínica (roda no Raspberry Pi)
+├── edge-node/                  # Infra local (roda no Raspberry Pi ou qualquer host Docker)
 │   ├── docker-compose.yml      # Pi-hole (host/DHCP) + DDNS, enxuto para RAM do Pi 2
+│   ├── Dockerfile.discovery    # Agente de descoberta de rede (container)
 │   ├── .env.example            # Variáveis de ambiente, tokens de DDNS
 │   └── scripts/
 │       └── network_discovery.py
@@ -83,15 +89,92 @@ dns-shield/
 │   │   ├── common/             # DbService (SQLite) + decorator multi-tenant
 │   │   ├── topology/           # ingestão da topologia + Analyzer
 │   │   ├── onboarding/         # outbox → WhatsApp
-│   │   └── reports/            # relatórios de ameaças por clínica
+│   │   └── reports/            # relatórios de ameaças
+│   ├── Dockerfile
 │   └── .env.example
+├── frontend/                   # Painel do cliente (HTML/CSS/JS estático + nginx)
+│   ├── index.html
+│   ├── app.js  styles.css  config.js
+│   └── Dockerfile
+├── docker-compose.simulation.yml  # DEMO completa sem hardware
+├── demo.sh                     # Lançador de demo (macOS/Linux)
+├── demo.ps1                    # Lançador de demo (Windows/PowerShell)
 └── docs/
     └── arquitetura.md
 ```
 
-## 6. Quick Start
+## 6. Requisitos de Hardware (onde roda?)
 
-### 6.1 Edge (na clínica)
+O DNS Shield roda em **qualquer computador com Linux + Docker**. Ele **não** roda
+em microcontroladores (Arduino, ESP32) — precisa de um sistema operacional, de
+Docker e de memória para o Pi-hole e suas blocklists.
+
+| Hardware | Roda? | Observação |
+|---|---|---|
+| **Arduino / ESP32** | ❌ | Microcontrolador, sem SO/Docker, RAM em KB. Inviável. |
+| **Raspberry Pi 2/3/4/5** | ✅ | Alvo oficial (ARMv7/ARM64). A imagem `pihole/pihole` é multi-arch. |
+| Raspberry Pi Zero 2 W | ✅ | Funciona, com folga menor de RAM. |
+| Outros SBC (Orange Pi, Rock Pi) | ✅ | Qualquer Linux ARM com Docker. |
+| Mini PC x86 / PC reaproveitado | ✅ | Ótimo para redes maiores. |
+| **Seu Mac/Linux/Windows (demo)** | ✅ | Via Docker, para desenvolver e demonstrar. |
+
+> **Por quê não Arduino?** Pi-hole é um servidor DNS/DHCP completo com milhões de
+> domínios em blocklist e um painel web — isso exige um SO Linux e centenas de MB
+> de RAM. Um Arduino tem kilobytes e não roda SO. O barato aqui é o **Raspberry
+> Pi**, não o microcontrolador.
+
+## 7. Demo sem hardware (Docker) — macOS, Linux e Windows
+
+Não precisa de Raspberry Pi para demonstrar. A simulação sobe **tudo** em
+containers na sua máquina: backend, Pi-hole, descoberta de rede (topologia
+fictícia de uma rede real) e o painel do cliente.
+
+**macOS / Linux:**
+```bash
+./demo.sh up        # sobe tudo e imprime o fluxo
+./demo.sh down      # derruba
+```
+
+**Windows (PowerShell):**
+```powershell
+.\demo.ps1 up
+.\demo.ps1 down
+```
+
+Pré-requisito: Docker Desktop **ou** OrbStack rodando. Ao final:
+
+| Serviço | URL |
+|---|---|
+| **Painel do cliente** | http://localhost:8088 |
+| Painel do Pi-hole | http://localhost:8080/admin (senha: `demo1234`) |
+| API | http://localhost:3000/api |
+
+> **Nota honesta sobre o DHCP:** no Raspberry Pi real o Pi-hole roda em
+> `network_mode: host` e assume o DHCP da rede física. No Docker Desktop
+> (Mac/Windows) isso não é possível (a VM do Docker é isolada da sua LAN), então
+> a demo roda o Pi-hole em modo bridge e usa uma topologia simulada. Tudo o mais
+> — DNS, descoberta, classificação, painel, onboarding — funciona de verdade.
+
+## 8. Frontend — Painel do Cliente
+
+Um painel web leve (HTML/CSS/JS puro, sem build) pensado para o cliente final
+(consumidor ou gestor), não para o time de TI. Mostra:
+
+- **Status do gateway** (online/offline) e IP sugerido;
+- **Dispositivos descobertos** com classificação (PC, câmera IoT, TV, impressora);
+- **Quantos dispositivos IoT** foram isolados;
+- **Relatório de ameaças** (consultas, bloqueadas, taxa de bloqueio);
+- Atualização automática a cada 15s.
+
+Rodando localmente (fora do Docker):
+```bash
+cd frontend
+python3 -m http.server 8088   # abre em http://localhost:8088
+```
+
+## 9. Quick Start (produção / Raspberry Pi)
+
+### 9.1 Edge (no local protegido)
 
 ```bash
 cd edge-node
@@ -109,7 +192,7 @@ sudo TENANT_ID=clinica-centro CLOUD_API_URL=http://localhost:3000/api \
   python3 edge-node/scripts/network_discovery.py --send
 ```
 
-### 6.2 Backend (local, grátis)
+### 9.2 Backend (local, grátis)
 
 ```bash
 cd cloud-backend
@@ -125,7 +208,7 @@ curl http://localhost:3000/api/health
 # {"status":"ok","service":"dns-shield-cloud-backend"}
 ```
 
-## 7. API (resumo)
+## 10. API (resumo)
 
 Todas as rotas exigem o header `X-Tenant-Id` (isolamento multi-tenant), exceto `/health`.
 
@@ -133,20 +216,20 @@ Todas as rotas exigem o header `X-Tenant-Id` (isolamento multi-tenant), exceto `
 |---|---|---|
 | `GET`  | `/api/health` | Health check |
 | `POST` | `/api/topology` | Ingere a topologia descoberta no Edge; retorna o plano de segurança |
-| `GET`  | `/api/topology` | Histórico de varreduras da clínica |
+| `GET`  | `/api/topology` | Histórico de varreduras do local |
 | `GET`  | `/api/reports/latest` | Último relatório de ameaças bloqueadas |
 | `POST` | `/api/reports` | Salva um relatório puxado do Pi-hole |
 
-## 8. Escalando para a nuvem (quando precisar)
+## 11. Escalando para a nuvem (quando precisar)
 
-Nada disso é necessário para o MVP. Quando o número de clínicas crescer:
+Nada disso é necessário para o MVP. Quando o número de locais gerenciados crescer:
 
 1. **Banco:** troque `DbService` (SQLite) por um adaptador Postgres — o contrato `put`/`queryByPrefix` é o mesmo.
 2. **Onboarding:** adicione um worker que drena a tabela `OUTBOX#` para uma fila (Redis/SQS) e entrega via WhatsApp.
 3. **IA:** aponte `LLM_API_URL` para um Ollama self-host (open source) e refine a classificação no `AnalyzerService`.
 4. **Deploy:** empacote o mesmo backend em container e suba em Kubernetes/serverless.
 
-## 9. Contribuindo
+## 12. Contribuindo
 
 Projeto open source sob licença MIT — contribuições são bem-vindas (Hacktoberfest-friendly 🎃).
 
@@ -154,6 +237,6 @@ Projeto open source sob licença MIT — contribuições são bem-vindas (Hackto
 2. Rode o build/testes do backend (`cd cloud-backend && npm run build`).
 3. Abra um Pull Request descrevendo a mudança.
 
-## 10. Licença
+## 13. Licença
 
 [MIT](LICENSE) — use, modifique e distribua livremente.

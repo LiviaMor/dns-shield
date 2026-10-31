@@ -24,6 +24,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import time
 import urllib.request
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -224,11 +225,42 @@ def _normalize_mac(mac: str) -> str:
     return ":".join(p.upper().zfill(2) for p in parts)
 
 
-def discover(cidr: Optional[str], gateway: Optional[str]) -> Topology:
+def simulated_topology() -> list[Device]:
+    """Topologia fictícia de uma clínica, para demos sem acesso à LAN física.
+
+    Reproduz o cenário típico: roteador da operadora, PCs da recepção,
+    impressora, câmera IoT e uma Smart TV — exatamente os dispositivos que o
+    Analyzer precisa separar em perfis de segurança.
+    """
+    return [
+        Device(ip="192.168.1.1", mac="C8:3A:35:00:00:01",
+               hostname="router-vivo", vendor_hint="Tenda/IoT", is_gateway=True),
+        Device(ip="192.168.1.10", mac="AC:BC:32:00:00:10",
+               hostname="recepcao-pc", vendor_hint="Apple", open_ports=[445, 139]),
+        Device(ip="192.168.1.11", mac="AC:BC:32:00:00:11",
+               hostname="dentista-pc", vendor_hint="Apple", open_ports=[445]),
+        Device(ip="192.168.1.50", mac="00:11:32:00:00:50",
+               hostname="nas-backup", vendor_hint="Synology", open_ports=[22, 445]),
+        Device(ip="192.168.1.80", mac="00:1D:C1:00:00:80",
+               hostname="camera-entrada", vendor_hint="Camera/IoT", open_ports=[554, 80]),
+        Device(ip="192.168.1.90", mac="F4:F5:D8:00:00:90",
+               hostname="smart-tv-sala", vendor_hint="Google/Nest", open_ports=[8008, 5353]),
+        Device(ip="192.168.1.120", mac="00:11:32:00:01:20",
+               hostname="impressora-hp", vendor_hint=None, open_ports=[9100, 631]),
+    ]
+
+
+def discover(cidr: Optional[str], gateway: Optional[str],
+             simulate: bool = False) -> Topology:
     cidr = cidr or detect_cidr()
     gateway = gateway or detect_gateway()
 
-    if shutil.which("nmap"):
+    if simulate:
+        devices = simulated_topology()
+        gateway = gateway or "192.168.1.1"
+        cidr = "192.168.1.0/24"
+        tool = "simulate"
+    elif shutil.which("nmap"):
         devices = scan_with_nmap(cidr)
         tool = "nmap"
     elif shutil.which("arp-scan"):
@@ -266,20 +298,29 @@ def send_to_cloud(topology: Topology) -> None:
         return
     url = base.rstrip("/") + "/topology"
     data = topology.to_json().encode("utf-8")
-    req = urllib.request.Request(
-        url,
-        data=data,
-        headers={
-            "Content-Type": "application/json",
-            "X-Tenant-Id": topology.tenant_id,
-        },
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310
-            print(f"[send] enviado -> {url} ({resp.status})", file=sys.stderr)
-    except Exception as exc:  # noqa: BLE001
-        print(f"[send] falha ao enviar: {exc}", file=sys.stderr)
+    attempts = int(os.environ.get("SEND_RETRIES", "10"))
+    for attempt in range(1, attempts + 1):
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+                "X-Tenant-Id": topology.tenant_id,
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310
+                body = resp.read().decode("utf-8")
+                print(f"[send] enviado -> {url} ({resp.status})", file=sys.stderr)
+                print(body)
+                return
+        except Exception as exc:  # noqa: BLE001
+            print(f"[send] tentativa {attempt}/{attempts} falhou: {exc}",
+                  file=sys.stderr)
+            if attempt < attempts:
+                time.sleep(3)
+    print("[send] desistindo após esgotar as tentativas.", file=sys.stderr)
 
 
 def main() -> int:
@@ -287,13 +328,16 @@ def main() -> int:
     parser.add_argument("--cidr", help="CIDR a varrer (ex.: 192.168.1.0/24)")
     parser.add_argument("--gateway", help="IP do gateway (detectado se omitido)")
     parser.add_argument("--send", action="store_true",
-                        help="Envia a topologia para a API da nuvem")
+                        help="Envia a topologia para a API do backend")
+    parser.add_argument("--simulate", action="store_true",
+                        help="Usa uma topologia fictícia de clínica (demo sem LAN)")
     args = parser.parse_args()
 
-    topology = discover(args.cidr, args.gateway)
+    simulate = args.simulate or os.environ.get("SIMULATE") == "true"
+    topology = discover(args.cidr, args.gateway, simulate=simulate)
     print(topology.to_json())
 
-    if args.send:
+    if args.send or os.environ.get("SEND") == "true":
         send_to_cloud(topology)
     return 0
 

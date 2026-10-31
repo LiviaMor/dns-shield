@@ -5,6 +5,11 @@ import { AppModule } from './app.module';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  // CORS liberado para o painel (frontend). Em produção, restrinja a origin.
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN ?? true,
+    allowedHeaders: ['Content-Type', 'X-Tenant-Id'],
+  });
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, transform: true }),
   );

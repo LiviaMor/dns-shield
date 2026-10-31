@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNS Shield — Painel</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🛡️</span>
+      <div>
+        <h1>DNS Shield</h1>
+        <p class="tagline">Gateway de Segurança DNS — Plug &amp; Play</p>
+      </div>
+    </div>
+    <div class="tenant">
+      <label for="tenant">Conta / Rede</label>
+      <input id="tenant" value="clinica-demo" />
+      <button id="refresh" type="button">Atualizar</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="status-grid" id="status-grid">
+      <article class="card status-card">
+        <h2>Status do Gateway</h2>
+        <p class="big" id="gw-status">—</p>
+        <p class="muted" id="gw-detail">verificando backend...</p>
+      </article>
+      <article class="card status-card">
+        <h2>Dispositivos na rede</h2>
+        <p class="big" id="device-count">—</p>
+        <p class="muted" id="scan-time">sem varredura ainda</p>
+      </article>
+      <article class="card status-card">
+        <h2>IoT isolados</h2>
+        <p class="big" id="iot-count">—</p>
+        <p class="muted">câmeras, TVs e afins segmentados</p>
+      </article>
+      <article class="card status-card">
+        <h2>IP sugerido do Gateway</h2>
+        <p class="big" id="gateway-ip">—</p>
+        <p class="muted">alocado automaticamente</p>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Dispositivos descobertos</h2>
+        <span class="badge" id="profile-badge">—</span>
+      </div>
+      <table id="devices-table">
+        <thead>
+          <tr>
+            <th>Host</th><th>IP</th><th>MAC</th><th>Fabricante</th>
+            <th>Perfil</th><th>Portas</th>
+          </tr>
+        </thead>
+        <tbody id="devices-body">
+          <tr><td colspan="6" class="muted center">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Relatório de ameaças (último período)</h2>
+      </div>
+      <div id="report-area" class="muted">Sem relatório disponível.</div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Onboarding pendente</h2>
+      </div>
+      <div id="onboarding-area" class="muted">Nenhuma instrução pendente.</div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Open source · MIT</span>
+    <span id="api-indicator" class="muted"></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
